@@ -141,6 +141,8 @@ export const sfx = {
   win: () => playClip("win", () => [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.14, "triangle", 0.05, i * 0.1))),
   fail: () => playClip("fail", () => [400, 320, 240].forEach((f, i) => tone(f, 0.2, "sawtooth", 0.04, i * 0.18))),
   drama: () => playClip("drama", synth.drama),
+  /** Plays whenever a result is shown: tension score, prescription, roulette, battle, salary. */
+  result: () => playClip("result", synth.drama),
   dhishum: () => playClip("dhishum", synth.dhishum),
   whoosh: () => playClip("whoosh", synth.whoosh),
   slap: () => playClip("slap", synth.slap),

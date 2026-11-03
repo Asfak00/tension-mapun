@@ -87,8 +87,7 @@ export function SalaryCalculator() {
     }
     const result = compute(values);
     setOutcome(result);
-    if (result.remaining < 2000) sfx.fail();
-    else sfx.win();
+    sfx.result();
   };
 
   const fillExample = () => {

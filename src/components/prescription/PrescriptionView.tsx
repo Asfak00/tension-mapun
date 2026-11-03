@@ -174,7 +174,7 @@ export function PrescriptionView() {
                 initial={{ scale: 3, opacity: 0, rotate: -30 }}
                 animate={{ scale: 1, opacity: 0.9, rotate: -14 }}
                 transition={{ delay: 0.9, type: "spring", stiffness: 500, damping: 16 }}
-                onAnimationComplete={() => sfx.slap()}
+                onAnimationComplete={() => sfx.result()}
                 className="pointer-events-none absolute right-8 bottom-24 rounded-xl border-[6px] border-double border-red px-5 py-2 font-display text-[34px] font-black text-red"
               >
                 APPROVED

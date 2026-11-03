@@ -161,7 +161,7 @@ function Versus({ a, b, aName, bName }: { a: TensionResult; b: TensionResult; aN
     }, 1300);
     const t2 = setTimeout(() => {
       setPhase("done");
-      sfx.drama();
+      sfx.result();
       burst(window.innerWidth / 2, window.innerHeight / 3, ["👑", "🔥", "💀", "😂"], 16);
     }, 3700);
     return () => {

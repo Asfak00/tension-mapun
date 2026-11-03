@@ -63,8 +63,7 @@ export function RevealSequence({
       if (t < 1) raf = requestAnimationFrame(frame);
       else {
         if (score === 100) sfx.clang();
-        if (score >= 61) sfx.drama();
-        else sfx.thud();
+        sfx.result();
         setStage("slam");
       }
     };

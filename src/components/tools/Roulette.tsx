@@ -65,8 +65,7 @@ export function Roulette() {
     setSpinning(false);
     setCurrent(result);
     setHistory((h) => [result, ...h].slice(0, 6));
-    if (result.mega) sfx.drama();
-    else sfx.thud();
+    sfx.result();
     const box = wheelRef.current?.getBoundingClientRect();
     if (box) burst(box.left + box.width / 2, box.top + 30, result.mega ? ["🚨", "💀", "🔥"] : ["🌚", "😬", "😂"], 12);
   };

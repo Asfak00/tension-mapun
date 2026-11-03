@@ -4,18 +4,19 @@ Each effect plays the MP3 below when the file exists, and falls back to a sound 
 
 | File          | Plays when                                           |
 | ------------- | ---------------------------------------------------- |
-| `drama.mp3`   | Dramatic reveal, mega roulette, battle winner, sound toggle |
+| `result.mp3`  | Any result shown: tension score, prescription stamp, roulette, battle winner, salary result |
+| `drama.mp3`   | Sound toggle, Sound Board                            |
 | `dhishum.mp3` | High-tension answer, poking the hero character, battle start |
-| `slap.mp3`    | Prescription APPROVED stamp                          |
+| `slap.mp3`    | Sound Board                                          |
 | `whoosh.mp3`  | Reveal scan starts                                   |
-| `win.mp3`     | Successful download, salary result with money left   |
-| `fail.mp3`    | Salary deficit, form validation errors               |
+| `win.mp3`     | Successful download                                  |
+| `fail.mp3`    | Form validation errors                               |
 | `clang.mp3`   | A 100/100 reveal, Sound Board                        |
 | `crack.mp3`   | Worst relationship answers, Sound Board              |
 
 ## Current files
 
-All eight current clips come from myinstants.com (user-uploaded, no licence stated). They are fine for development and testing. Replace them with clips you own or that are licensed for reuse (for example CC0) before a public launch.
+`result.mp3` was supplied by the project owner. The other eight clips come from myinstants.com (user-uploaded, no licence stated). They are fine for development and testing. Replace them with clips you own or that are licensed for reuse (for example CC0) before a public launch.
 
 | File          | Myinstants clip           |
 | ------------- | ------------------------- |
