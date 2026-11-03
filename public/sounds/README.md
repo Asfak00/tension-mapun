@@ -1,0 +1,33 @@
+# Optional sound clips
+
+Each effect plays the MP3 below when the file exists, and falls back to a sound synthesized in the browser when it doesn't. Replace a file with the same name to swap a sound.
+
+| File          | Plays when                                           |
+| ------------- | ---------------------------------------------------- |
+| `drama.mp3`   | Dramatic reveal, mega roulette, battle winner, sound toggle |
+| `dhishum.mp3` | High-tension answer, poking the hero character, battle start |
+| `slap.mp3`    | Prescription APPROVED stamp                          |
+| `whoosh.mp3`  | Reveal scan starts                                   |
+| `win.mp3`     | Successful download, salary result with money left   |
+| `fail.mp3`    | Salary deficit, form validation errors               |
+| `clang.mp3`   | A 100/100 reveal, Sound Board                        |
+| `crack.mp3`   | Worst relationship answers, Sound Board              |
+
+## Current files
+
+All eight current clips come from myinstants.com (user-uploaded, no licence stated). They are fine for development and testing. Replace them with clips you own or that are licensed for reuse (for example CC0) before a public launch.
+
+| File          | Myinstants clip           |
+| ------------- | ------------------------- |
+| `drama.mp3`   | dun dun dunnnnnnnn (brass)|
+| `dhishum.mp3` | Punch Sound               |
+| `slap.mp3`    | bonk doge                 |
+| `whoosh.mp3`  | VINE BOOM SOUND           |
+| `win.mp3`     | ding sound effect         |
+| `fail.mp3`    | Error SOUNDSS             |
+| `clang.mp3`   | Metal pipe clang          |
+| `crack.mp3`   | Bone Crack                |
+
+Only add clips you have the rights to use. Film dialogue and actors' voices are usually copyrighted and protected by personality rights; do not ship them without a licence.
+
+Sounds stay muted until the visitor turns them on with the speaker button.
