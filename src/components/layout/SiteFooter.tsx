@@ -2,6 +2,8 @@ import Link from "next/link";
 import { MICROCOPY } from "@/data/jokes";
 import { NAV } from "./nav";
 
+const GITHUB_URL = "https://github.com/Asfak00/tension-mapun";
+
 export function SiteFooter() {
   return (
     <footer className="relative mt-24 overflow-hidden border-t-[3px] border-ink bg-acid text-ink">
@@ -24,6 +26,9 @@ export function SiteFooter() {
           <Link href="/prescription" className="font-display text-lg font-bold hover:underline">
             Mapun Clinic ↗
           </Link>
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="font-display text-lg font-bold hover:underline">
+            GitHub ↗
+          </a>
         </nav>
       </div>
       <div className="flex flex-col items-center justify-between gap-2 border-t-2 border-ink/20 px-4 py-4 text-center font-bangla text-sm font-semibold sm:flex-row sm:px-6 sm:text-left">
