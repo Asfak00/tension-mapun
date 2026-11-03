@@ -7,13 +7,17 @@ const LINES = [
   "আপনার future বর্তমানে আপনাকে avoid করছে।",
 ];
 
-export function Marquee({ className = "", tone = "acid" }: { className?: string; tone?: "acid" | "pink" }) {
+/**
+ * Endless text rail. The track holds two identical copies and slides by -50%,
+ * so spacing lives in each item's padding (not a flex gap) to keep the halves equal.
+ */
+export function Marquee({ className = "", tone = "acid", reverse = false }: { className?: string; tone?: "acid" | "pink"; reverse?: boolean }) {
   const bg = tone === "acid" ? "bg-acid" : "bg-pink";
   return (
     <div className={`overflow-hidden border-y-[3px] border-ink ${bg} py-3 text-ink ${className}`} aria-hidden>
-      <div className="flex w-max animate-marquee gap-8 whitespace-nowrap">
+      <div className={`flex w-max animate-marquee whitespace-nowrap ${reverse ? "[animation-direction:reverse]" : ""}`}>
         {[...LINES, ...LINES].map((line, i) => (
-          <span key={i} className="flex items-center gap-8 font-bangla text-lg font-bold">
+          <span key={i} className="flex items-center gap-8 pr-8 font-bangla text-lg font-bold">
             {line}
             <span className="font-display text-xl">✺</span>
           </span>

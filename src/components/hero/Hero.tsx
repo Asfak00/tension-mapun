@@ -11,7 +11,7 @@ import { RotatingProblems } from "./RotatingProblems";
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 pt-10 pb-16 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-16">
+      <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 pt-10 pb-6 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:pt-16">
         <div className="relative z-10">
           <motion.span
             initial={{ opacity: 0, rotate: -12, scale: 0.6 }}
@@ -88,7 +88,11 @@ export function Hero() {
           <HeroCharacter />
         </motion.div>
       </div>
-      <Marquee className="-rotate-[1.5deg] scale-105" />
+      {/* Crossed tapes; the padding leaves room for the tilt inside overflow-hidden. */}
+      <div className="relative py-10">
+        <Marquee tone="pink" reverse className="absolute inset-x-[-5%] top-1/2 -translate-y-1/2 rotate-[5deg] opacity-90 sm:rotate-[2deg]" />
+        <Marquee className="relative left-[-5%] w-[110%] -rotate-[3deg] sm:-rotate-[1.5deg]" />
+      </div>
     </section>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown, Copy, Send } from "lucide-react";
+import { Copy, Send } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { TensionGuy } from "@/components/characters/TensionGuy";
 import { moodFor } from "@/components/shared/moodFor";
 import { CHAT_FALLBACK, CHAT_RULES, EXCUSE_CONTEXTS, EXCUSES, FUTURES, HOROSCOPE, NEWS, RASHI } from "@/data/extras";
@@ -15,74 +15,131 @@ import { sfx } from "@/lib/sound";
 import { useTensionStore } from "@/store/useTensionStore";
 
 const PANELS = [
-  { id: "horoscope", title: "Daily Tension Horoscope", emoji: "♈", note: "আজকে কোন tension আপনার জন্য লেখা আছে", C: Horoscope },
-  { id: "boss", title: "Boss Mood Predictor", emoji: "😤", note: "আজকে leave চাইবেন কিনা", C: BossMood },
-  { id: "future", title: "Future Simulator", emoji: "🔮", note: "১, ৫ বা ১০ বছর পরে আপনি", C: FutureSimulator },
-  { id: "ex", title: "Ex Detector", emoji: "💔", note: "এখনো move on হয়েছেন কিনা", C: ExDetector },
-  { id: "excuse", title: "Random Excuse Generator", emoji: "🙊", note: "Office, class, family — সব জায়গার জন্য", C: ExcuseGenerator },
-  { id: "news", title: "Tension News", emoji: "📰", note: "দেশের সবচেয়ে অদরকারি খবর", C: TensionNews },
-  { id: "sounds", title: "ঢালিউড Sound Board", emoji: "🎬", note: "ঢিশুম, ড্রামা জুম, চড় — বাংলা সিনেমার effect", C: SoundBoard },
-  { id: "chat", title: "Mapun Chat", emoji: "💬", note: "Dr. Mapun-এর সাথে (scripted) আড্ডা", C: MapunChat },
+  { id: "horoscope", title: "Daily Tension Horoscope", emoji: "♈", note: "আজকে কোন tension আপনার জন্য লেখা আছে", color: "#B78AFF", C: Horoscope },
+  { id: "boss", title: "Boss Mood Predictor", emoji: "😤", note: "আজকে leave চাইবেন কিনা", color: "#FF793D", C: BossMood },
+  { id: "future", title: "Future Simulator", emoji: "🔮", note: "১, ৫ বা ১০ বছর পরে আপনি", color: "#C9A7FF", C: FutureSimulator },
+  { id: "ex", title: "Ex Detector", emoji: "💔", note: "এখনো move on হয়েছেন কিনা", color: "#FF70B8", C: ExDetector },
+  { id: "excuse", title: "Random Excuse Generator", emoji: "🙊", note: "Office, class, family — সব জায়গার জন্য", color: "#FFB547", C: ExcuseGenerator },
+  { id: "news", title: "Tension News", emoji: "📰", note: "দেশের সবচেয়ে অদরকারি খবর", color: "#E8FF65", C: TensionNews },
+  { id: "sounds", title: "ঢালিউড Sound Board", emoji: "🎬", note: "ঢিশুম, ড্রামা জুম, চড় — বাংলা সিনেমার effect", color: "#5CE1E6", C: SoundBoard },
+  { id: "chat", title: "Mapun Chat", emoji: "💬", note: "Dr. Mapun-এর সাথে (scripted) আড্ডা", color: "#7CF2B0", C: MapunChat },
 ];
 
-export function Extras() {
-  const [open, setOpen] = useState<string | null>("horoscope");
-  return (
-    <div className="mx-auto max-w-5xl px-4 pt-8 sm:px-6">
-      <span className="sticker bg-[#5CE1E6]">Bonus পাগলামি</span>
-      <h1 className="mt-4 font-display text-[clamp(2rem,6vw,4rem)] leading-[1.15] font-black">
-        আরো কিছু <span className="text-lilac">অদরকারি</span> যন্ত্র
-      </h1>
-      <p className="mt-3 font-bangla text-lg text-text/80">
-        সবগুলোই কাজ করে, কোনোটাই সত্যি না। আর{" "}
-        <Link href="/tools/roulette" className="font-semibold text-acid underline underline-offset-4">
-          Tension Roulette
-        </Link>{" "}
-        তো আছেই।
-      </p>
+function subscribeHash(onChange: () => void) {
+  window.addEventListener("hashchange", onChange);
+  return () => window.removeEventListener("hashchange", onChange);
+}
 
-      <div className="mt-10 border-t-[3px] border-text">
-        {PANELS.map(({ id, title, emoji, note, C }) => {
-          const expanded = open === id;
-          return (
-            <section key={id} className="border-b border-line">
-              <h2>
-                <button
-                  type="button"
-                  aria-expanded={expanded}
-                  aria-controls={`panel-${id}`}
-                  onClick={() => setOpen(expanded ? null : id)}
-                  className="group flex w-full items-center gap-4 py-5 text-left"
-                >
-                  <span className="text-3xl transition-transform group-hover:scale-125 group-hover:-rotate-12" aria-hidden>
-                    {emoji}
-                  </span>
-                  <span className="flex-1">
-                    <span className="block font-display text-[clamp(1.1rem,3vw,1.6rem)] font-black">{title}</span>
-                    <span className="block font-bangla text-sm text-muted">{note}</span>
-                  </span>
-                  <ChevronDown className={`size-6 shrink-0 transition-transform ${expanded ? "rotate-180 text-acid" : ""}`} />
-                </button>
-              </h2>
-              <AnimatePresence initial={false}>
-                {expanded && (
-                  <motion.div
-                    id={`panel-${id}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
-                    className="overflow-hidden"
+/** Tool switcher: sticky list on desktop, swipeable rail on mobile. The URL hash is the open tool, so every tool is linkable. */
+export function Extras() {
+  const hash = useSyncExternalStore(subscribeHash, () => window.location.hash, () => "");
+  const active = Math.max(0, PANELS.findIndex((p) => `#${p.id}` === hash));
+  const panelRef = useRef<HTMLDivElement>(null);
+  const panel = PANELS[active];
+
+  const select = (i: number, scroll = false) => {
+    history.replaceState(null, "", `#${PANELS[i].id}`);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    sfx.tick();
+    document.getElementById(`tab-${PANELS[i].id}`)?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+    if (scroll) panelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
+      <header className="relative overflow-hidden rounded-[28px] border-[3px] border-ink bg-[#5CE1E6] p-6 text-ink shadow-[8px_8px_0_#000] sm:p-10">
+        <div className="pointer-events-none absolute -right-4 -bottom-8 flex gap-1 text-[5rem] leading-none opacity-90 sm:text-[7rem]" aria-hidden>
+          <span className="rotate-[-12deg]">🤪</span>
+          <span className="hidden rotate-[10deg] sm:inline">🔮</span>
+        </div>
+        <span className="sticker bg-cream">Bonus পাগলামি × {toBn(PANELS.length)}</span>
+        <h1 className="relative mt-4 max-w-3xl font-display text-[clamp(2rem,6vw,4.2rem)] leading-[1.1] font-black">
+          আরো কিছু <span className="bg-ink px-2 text-[#5CE1E6]">অদরকারি</span> যন্ত্র
+        </h1>
+        <p className="relative mt-4 max-w-xl font-bangla text-lg font-medium">
+          সবগুলোই কাজ করে, কোনোটাই সত্যি না। আর{" "}
+          <Link href="/tools/roulette" className="font-bold underline decoration-2 underline-offset-4">
+            Tension Roulette
+          </Link>{" "}
+          তো আছেই।
+        </p>
+      </header>
+
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[19rem_minmax(0,1fr)]">
+        <nav aria-label="পাগলামির তালিকা" className="sticky top-16 z-30 -mx-4 bg-ink/90 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6 lg:top-24 lg:mx-0 lg:self-start lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+          <ul className="flex snap-x gap-2 overflow-x-auto [scrollbar-width:none] lg:flex-col lg:overflow-visible">
+            {PANELS.map((p, i) => {
+              const current = i === active;
+              return (
+                <li key={p.id} className="snap-start">
+                  <button
+                    id={`tab-${p.id}`}
+                    type="button"
+                    aria-pressed={current}
+                    aria-controls="extras-panel"
+                    onClick={() => select(i, window.matchMedia("(max-width: 1023px)").matches)}
+                    className={`group flex w-max items-center gap-3 rounded-2xl border-[3px] px-3 py-2 text-left transition-[transform,box-shadow,background-color] lg:w-full ${
+                      current ? "border-ink text-ink shadow-[4px_4px_0_#000] lg:translate-x-1" : "border-line hover:border-text"
+                    }`}
+                    style={current ? { background: p.color } : undefined}
                   >
-                    <div className="pb-8">
-                      <C />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </section>
-          );
-        })}
+                    <span
+                      className={`grid size-10 shrink-0 place-items-center rounded-xl border-2 text-xl transition-transform group-hover:-rotate-12 ${current ? "border-ink bg-cream" : "border-line bg-surface"}`}
+                      aria-hidden
+                    >
+                      {p.emoji}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block font-display text-sm leading-tight font-black whitespace-nowrap lg:whitespace-normal">{p.title}</span>
+                      <span className={`hidden font-bangla text-xs leading-snug lg:block ${current ? "opacity-75" : "text-muted"}`}>{p.note}</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div ref={panelRef} id="extras-panel" className="min-w-0 scroll-mt-36 lg:scroll-mt-24" aria-live="polite">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.section
+              key={panel.id}
+              aria-labelledby={`title-${panel.id}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+              className="overflow-hidden rounded-[28px] border-2 border-line bg-surface"
+            >
+              <div className="flex items-center gap-4 border-b-[3px] border-ink px-5 py-5 text-ink sm:px-8" style={{ background: panel.color }}>
+                <span className="grid size-14 shrink-0 -rotate-6 place-items-center rounded-2xl border-[3px] border-ink bg-cream text-3xl shadow-[3px_3px_0_#000]" aria-hidden>
+                  {panel.emoji}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 id={`title-${panel.id}`} className="font-display text-[clamp(1.25rem,3vw,2rem)] leading-tight font-black">
+                    {panel.title}
+                  </h2>
+                  <p className="font-bangla text-sm font-semibold opacity-80">{panel.note}</p>
+                </div>
+                <span className="hidden font-display text-sm font-bold sm:block">
+                  {String(active + 1).padStart(2, "0")} / {String(PANELS.length).padStart(2, "0")}
+                </span>
+              </div>
+              <div className="p-5 sm:p-8">
+                <panel.C />
+              </div>
+            </motion.section>
+          </AnimatePresence>
+
+          <div className="mt-5 flex justify-between gap-3">
+            <button type="button" className="btn btn-ghost" onClick={() => select((active + PANELS.length - 1) % PANELS.length, true)}>
+              ← {PANELS[(active + PANELS.length - 1) % PANELS.length].emoji} আগেরটা
+            </button>
+            <button type="button" className="btn btn-acid" onClick={() => select((active + 1) % PANELS.length, true)}>
+              পরেরটা {PANELS[(active + 1) % PANELS.length].emoji} →
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
