@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TensionGuy } from "@/components/characters/TensionGuy";
 import { Disclaimer } from "@/components/shared/Disclaimer";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -14,6 +14,7 @@ import { useResultSource } from "@/hooks/useResultSource";
 import { toBn } from "@/lib/bn";
 import { rankCategories } from "@/lib/result-generator";
 import { cleanName } from "@/lib/share";
+import { sfx } from "@/lib/sound";
 import { useTensionStore } from "@/store/useTensionStore";
 import { RevealSequence } from "./RevealSequence";
 import { ShareStudio } from "./ShareStudio";
@@ -27,6 +28,16 @@ export function ResultView() {
   const setChallenge = useTensionStore((s) => s.setChallenge);
   const setSelected = useTensionStore((s) => s.setSelected);
   const [confirmRetake, setConfirmRetake] = useState(false);
+
+  // Play the result sound each time a result is opened. Right after a test, RevealSequence plays it instead.
+  const resultCode = source.status === "ok" ? source.result.code : null;
+  const revealing = source.status === "ok" && source.isMine && pendingReveal;
+  const announced = useRef<string | null>(null);
+  useEffect(() => {
+    if (!resultCode || announced.current === resultCode) return;
+    announced.current = resultCode;
+    if (!revealing) sfx.result();
+  }, [resultCode, revealing]);
 
   if (source.status === "loading") return <Loading />;
   if (source.status === "empty") return <EmptyState title={MICROCOPY.empty} text="আগে test দেন, তারপর result। নিয়ম।" />;

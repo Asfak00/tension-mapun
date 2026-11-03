@@ -29,9 +29,19 @@ export function RevealSequence({
   const [count, setCount] = useState(reduce ? result.score : 0);
   const { score, level } = result;
   const emergency = level.id === "emergency";
+  // The result sound plays once: at the slam, or on close if the reveal was skipped.
+  const announced = useRef(false);
+  const announce = () => {
+    if (announced.current) return;
+    announced.current = true;
+    sfx.result();
+  };
   const done = useRef(onDone);
   useEffect(() => {
-    done.current = onDone;
+    done.current = () => {
+      announce();
+      onDone();
+    };
   }, [onDone]);
 
   // Scan log lines, then hand off to the counter.
@@ -63,7 +73,6 @@ export function RevealSequence({
       if (t < 1) raf = requestAnimationFrame(frame);
       else {
         if (score === 100) sfx.clang();
-        sfx.result();
         setStage("slam");
       }
     };
@@ -88,6 +97,9 @@ export function RevealSequence({
   }, []);
 
   const revealed = stage === "slam" || stage === "title";
+  useEffect(() => {
+    if (revealed) announce();
+  }, [revealed]);
   const panicMood = count < score * 0.5 ? "panic" : count < score * 0.85 ? "meltdown" : level.mood;
 
   return (
